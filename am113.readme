@@ -1,0 +1,14 @@
+
+cmake ../AISDK -DCMAKE_TOOLCHAIN_FILE=../am113a-toolchain.cmake -DFFMPEG_LIB_PATH="/home/sven/work/3rd/_install/ffmpeg-4.0-am113/lib" -DFFMPEG_INCLUDE_DIR="/home/sven/work/3rd/_install/ffmpeg-4.0-am113/include" -DPORTAUDIO=ON -DPORTAUDIO_LIB_PATH="/home/sven/work/3rd/_install/portaudio-v19-a113/lib" -DPORTAUDIO_INCLUDE_DIR="/home/sven/work/3rd/_install/portaudio-v19-a113/include" -DOPENSSL=ON -DOPENSSL_INCLUDE_DIR=/home/sven/work/3rd/_install/openssl-1.1h-am113/include -DOPENSSL_LIB_PATH="/home/sven/work/3rd/_install/openssl-1.1h-am113/lib" -DCMAKE_INSTALL_PREFIX=./_install
+
+
+cmake ../AISDK -DCMAKE_TOOLCHAIN_FILE=../am113a-toolchain.cmake -DFFMPEG_LIB_PATH="/home/sven/work/3rd/_install/ffmpeg-4.0-am113/lib" -DFFMPEG_INCLUDE_DIR="/home/sven/work/3rd/_install/ffmpeg-4.0-am113/include" -DOPENSSL=ON -DOPENSSL_INCLUDE_DIR=/home/sven/work/3rd/_install/openssl-1.1h-am113/include -DOPENSSL_LIB_PATH="/home/sven/work/3rd/_install/openssl-1.1h-am113/lib" -DAO_INCLUDE_DIR=/home/sven/work/3rd/_install/libao-1.2.0-am113/include -DAO_LIB_PATH=//home/sven/work/3rd/_install/libao-1.2.0-am113/lib -DCMAKE_INSTALL_PREFIX=./_install -DCMAKE_BUILD_TYPE=DEBUG
+
+
+// support microphone
+cmake ../AISDK -DCMAKE_TOOLCHAIN_FILE=../am113a-toolchain.cmake -DFFMPEG_LIB_PATH="/home/sven/work/3rd/_install/ffmpeg-4.0-am113/lib" -DFFMPEG_INCLUDE_DIR="/home/sven/work/3rd/_install/ffmpeg-4.0-am113/include" -DOPENSSL=ON -DOPENSSL_INCLUDE_DIR=/home/sven/work/3rd/_install/openssl-1.1h-am113/include -DOPENSSL_LIB_PATH="/home/sven/work/3rd/_install/openssl-1.1h-am113/lib" -DAO_INCLUDE_DIR=/home/sven/work/3rd/_install/libao-1.2.0-am113/include -DAO_LIB_PATH=//home/sven/work/3rd/_install/libao-1.2.0-am113/lib -DPORTAUDIO=ON -DPORTAUDIO_LIB_PATH="/home/sven/work/3rd/_install/portaudio-v19-am113/lib" -DPORTAUDIO_INCLUDE_DIR="/home/sven/work/3rd/_install/portaudio-v19-am113/include" -DCMAKE_INSTALL_PREFIX=./_install -DCMAKE_BUILD_TYPE=DEBUG
+
+
+cmake ../AISDK -DCMAKE_TOOLCHAIN_FILE=../rk3308-toolchain.cmake -DCMAKE_INSTALL_PREFIX=./_install -DCMAKE_BUILD_TYPE=DEBUG -DENABLE_SAI_SDK=OFF -DIFLYTEK_KEY_WORD_DETECTOR=ON -DIFLYTEK_KEY_WORD_DETECTOR_LIB_PATH=../AISDK/ThirdLibrary/Iflytek/lib -DIFLYTEK_KEY_WORD_DETECTOR_INCLUDE_DIR=../AISDK/ThirdLibrary/Iflytek/include -DIFLYTEK_AIUI_ASR=ON -DIFLYTEK_AIUI_ASR_LIB_PATH=../AISDK/ThirdLibrary/Iflytek/lib -DIFLYTEK_AIUI_ASR_INCLUDE_DIR=../AISDK/ThirdLibrary/Iflytek/include
+
+
