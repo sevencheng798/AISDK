@@ -1,0 +1,10 @@
+
+
+export PKG_CONFIG_PATH=/home/sven/work/3rd/_install/portaudio-v19/lib/pkgconfig:/home/sven/work/3rd/_install/ffmpeg-4.0/lib/pkgconfig:/home/sven/work/3rd/_install/openssl-1.1h/lib/pkgconfig
+
+
+pkg-config --libs --cflags portaudio-2.0 libavformat  libavfilter libavdevice libavcodec libavutil libswresample libswscale openssl
+
+
+export LD_LIBRARY_PATH=/home/sven/work/3rd/_install/ffmpeg-4.0/lib
+

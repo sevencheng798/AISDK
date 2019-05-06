@@ -1,0 +1,9 @@
+
+cmake ../ -DFFMPEG_LIB_PATH="/home/sven/work/3rd/_install/ffmpeg-4.0/lib" -DFFMPEG_INCLUDE_DIR="/home/sven/work/3rd/_install/ffmpeg-4.0/include" -DPORTAUDIO=ON -DPORTAUDIO_LIB_PATH="/home/sven/work/3rd/_install/portaudio-v19/lib" -DPORTAUDIO_INCLUDE_DIR="/home/sven/work/3rd/_install/portaudio-v19/include" -DOPENSSL=ON -DOPENSSL_INCLUDE_DIR=//home/sven/work/3rd/_install/openssl-1.1h/include -DOPENSSL_LIB_PATH="/home/sven/work/3rd/_install/openssl-1.1h/lib" -DCMAKE_INSTALL_PREFIX=./_install
+
+
+g++ -o pa-ff PaWrapperTest.cpp -I../include/PortAudioMediaPlayer/ -L../../../build_dir/MediaPlayer/PortAudioMediaPlayer/src/ -I/home/sven/work/3rd/_install/portaudio-v19/include -L/home/sven/work/3rd/_install/openssl-1.1h/lib -L/home/sven/work/3rd/_install/portaudio-v19/lib -std=c++11 -lPortAudioMediaPlayer -lportaudio -lssl -lcrypto
+
+
+export LD_LIBRARY_PATH=/home/sven/work/3rd/_install/ffmpeg-4.0/lib
+

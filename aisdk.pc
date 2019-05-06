@@ -1,0 +1,9 @@
+Name: aisdk
+Description: 
+Version: 1.0.1
+Requires: openssl libao
+prefix=/home/sven/work/rockchip/SoundAi/build-am113/_install
+includedir=${prefix}/include
+libdir=${prefix}/lib
+Libs: -L${libdir} -lAICommon -lAudioMediaPlayer -lAudioTrackManager -lSoundAi -lKeywordDetector -lNLP -lSpeechSynthesizer
+Cflags: -I${includedir}
