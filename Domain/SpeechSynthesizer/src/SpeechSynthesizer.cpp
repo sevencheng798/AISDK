@@ -260,7 +260,23 @@ void SpeechSynthesizer::init() {
 void SpeechSynthesizer::executePreHandleAfterValidation(std::shared_ptr<ChatDirectiveInfo> info) {
 
 	// TODO:parse tts url and insert chatInfo map - Fix me.
-	info->attachmentReader = info->directive->getAttachmentReader(info->directive->getMessageId(), utils::sharedbuffer::ReaderPolicy::BLOCKING);
+#ifdef ENABLE_SOUNDAI_ASR
+	auto data = info->directive->getData();
+	Json::CharReaderBuilder readerBuilder;
+	JSONCPP_STRING errs;
+	Json::Value root;
+	std::unique_ptr<Json::CharReader> const reader(readerBuilder.newCharReader());
+	if (!reader->parse(data.c_str(), data.c_str()+data.length(), &root, &errs)) {
+		AISDK_ERROR(LX("executePreHandleAfterValidation").d("reason", "parseDataKeyError"));
+		return;
+	}
+	std::string url = root["tts_url"].asString();
+	AISDK_INFO(LX("executePreHandleAfterValidation").d("url", url));
+	info->url = url;
+#else	
+	info->attachmentReader = info->directive->getAttachmentReader(
+		info->directive->getMessageId(), utils::sharedbuffer::ReaderPolicy::BLOCKING);
+#endif	
 	// If everything checks out, add the chatInfo to the map.
     if (!setChatDirectiveInfo(info->directive->getMessageId(), info)) {
 		AISDK_ERROR(LX("executePreHandleFailed")
@@ -441,6 +457,7 @@ void SpeechSynthesizer::executePlaybackError(const utils::mediaPlayer::ErrorType
 
 void SpeechSynthesizer::startPlaying() {
 	AISDK_INFO(LX("startPlaying"));
+	#ifndef ENABLE_SOUNDAI_ASR
 	/// The following params must be set fix point.
 	const utils::AudioFormat format{
 						.encoding = aisdk::utils::AudioFormat::Encoding::LPCM,
@@ -452,6 +469,9 @@ void SpeechSynthesizer::startPlaying() {
 	};
 	
     m_mediaSourceId = m_speechPlayer->setSource(std::move(m_currentInfo->attachmentReader), &format);
+	#else
+	m_mediaSourceId = m_speechPlayer->setSource(m_currentInfo->url);
+	#endif
     if (MediaPlayerInterface::ERROR == m_mediaSourceId) {
 		AISDK_ERROR(LX("startPlayingFailed").d("reason", "setSourceFailed"));
         executePlaybackError(ErrorType::MEDIA_ERROR_INTERNAL_DEVICE_ERROR, "playFailed");
