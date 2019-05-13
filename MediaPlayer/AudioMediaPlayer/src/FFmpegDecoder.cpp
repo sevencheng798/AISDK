@@ -362,6 +362,7 @@ void FFmpegDecoder::decode() {
         status = avcodec_send_packet(m_codecContext.get(), packet.get());
         transitionStateUsingStatus(status, m_state, "decode::sendPacket");
     }
+
 }
 
 void FFmpegDecoder::next() {

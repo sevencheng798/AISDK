@@ -17,7 +17,8 @@ add_library(ASR SHARED
 	${asr_SOURCES})
 
 include_directories(ASR 
-	"${ASR_SOURCE_DIR}/include")
+	"${ASR_SOURCE_DIR}/include"
+	"${JSONCPP_INCLUDE_DIR}")
 
 if (ENABLE_IFLYTEK_AIUI_ASR)
 include_directories(ASR 
