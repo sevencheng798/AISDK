@@ -18,66 +18,73 @@
 #include <string>
 #include <unordered_set>
 
-#include <Utils/SoundAi/SoundAiObserverInterface.h>
-#include <Utils/DeviceInfo.h>
 #include <DMInterface/MessageConsumerInterface.h>
-
-#include "SoundAi/sai_sdk.h"
+#include <Utils/DeviceInfo.h>
+#include <Utils/Threading/Executor.h>
+#include <Utils/Channel/AudioTrackManagerInterface.h>
+#include <Utils/Channel/ChannelObserverInterface.h>
+#include "ASR/GenericAutomaticSpeechRecognizer.h"
+#include "ASR/AutomaticSpeechRecognizerConfiguration.h"
+#include "ASR/ASRTimer.h"
+// SoundAi vendor header file.
+#include "sai_sdk.h"
 
 namespace aisdk{
-namespace soundai {
-namespace engine {
+namespace asr {
+namespace soundAiEngine {
 	
-class SoundAiEngine {
+class SoundAiAutomaticSpeechRecognizer
+	: public utils::channel::ChannelObserverInterface
+	, public GenericAutomaticSpeechRecognizer
+	, public std::enable_shared_from_this<SoundAiAutomaticSpeechRecognizer> {
 public:
 	using SoundAiObserver = utils::soundai::SoundAiObserverInterface;
-	static std::unique_ptr<SoundAiEngine> create(
+	static std::shared_ptr<SoundAiAutomaticSpeechRecognizer> create(
 		const std::shared_ptr<utils::DeviceInfo>& deviceInfo,
+		std::shared_ptr<utils::channel::AudioTrackManagerInterface> trackManager,
+		std::shared_ptr<utils::attachment::AttachmentManagerInterface> attachmentDocker,
 		std::shared_ptr<dmInterface::MessageConsumerInterface> messageConsumer,
-		const std::string &configPath, double threshold = 0.45);
+		const AutomaticSpeechRecognizerConfiguration& config);
 
-	/**
-	 * Start service.
-	 */
-	bool start();
+	/// @name GenericAutomaticSpeechRecognizer.
+	/// @{
+	bool start() override;
+	bool stop() override;
+	bool reset() override;
+	std::future<bool> recognize(
+		std::shared_ptr<utils::sharedbuffer::SharedBuffer> stream,
+        utils::sharedbuffer::SharedBuffer::Index begin = INVALID_INDEX,
+        utils::sharedbuffer::SharedBuffer::Index keywordEnd = INVALID_INDEX) override;
+	std::future<bool> acquireTextToSpeech(
+		std::string text,
+		std::shared_ptr<utils::attachment::AttachmentWriter> writer) override;
+	/// }
 
-	/**
-	 * Stop service.
-	 */	
-	bool stop();
-
-	/**
-     * Adds an observer to be notified of sound ai state changes.
-     *
-     * @param observer The new observer to notify of sai state changes.
-     */
-    void addObserver(std::shared_ptr<utils::soundai::SoundAiObserverInterface> observer);
-
-    /**
-     * Removes an observer from the internal collection of observers synchronously. If the observer is not present,
-     * nothing will happen.
-     *
-     * @param observer The observer to remove.
-     */
-    void removeObserver(std::shared_ptr<utils::soundai::SoundAiObserverInterface> observer);
+		/// @name ChannelObserverInterface method.
+	/// @{
+	void onTrackChanged(utils::channel::FocusState newTrace) override;
+	/// @}
 	
     /**
      * Destructor.
      */
-	~SoundAiEngine();
+	~SoundAiAutomaticSpeechRecognizer();
 	
 protected:
 	/// Pointing to the class itself @c SoundAiEngine and pass to static function
-	static SoundAiEngine *m_soundAiEngine;
+	static SoundAiAutomaticSpeechRecognizer *m_soundAiEngine;
 
 private:
 	/**
      * Constructor.
      */
-	SoundAiEngine(
+	SoundAiAutomaticSpeechRecognizer(
 		const std::shared_ptr<utils::DeviceInfo>& deviceInfo,
+		std::shared_ptr<utils::channel::AudioTrackManagerInterface> trackManager,
+		std::shared_ptr<utils::attachment::AttachmentManagerInterface> attachmentDocker,
 		std::shared_ptr<dmInterface::MessageConsumerInterface> messageConsumer,
-		const std::string &configPath, double threshold);
+		const std::string &configPath,
+		double threshold);
 
     /**
      * Initialize the new instance.
@@ -85,14 +92,6 @@ private:
      * @return Whether or not the operation was successful.
      */
     bool init();
-
-	/**
-     * This function updates the @c SoundAiObserver state and notifies the state observer.  Any changes to
-     * @c m_state should be made through this function.
-     *
-     * @param state The new state to change to.
-     */
-    void setState(SoundAiObserver::State state);
 
 	/**
 	 * Notifies all keyword observers of the keyword detection.
@@ -188,9 +187,29 @@ private:
 	static void beatDataCallback(const char * id, size_t len);
 
 	///@}
+
+	bool executeRecognize(
+		std::string dialogId,
+		std::string keyword,
+		float angle);
+
+	void transitionFromListeningTimedOut();
+
+	/**
+	 * The function that It must be ensured that there is a timeout mechanism when there
+	 * is no response for a long time during the transition from recognition to thinking.
+	 */
+	void tryEntryIdleStateOnTimer();
+
+	void terminate() override;
 	
 	/// Device info
     std::shared_ptr<utils::DeviceInfo> m_deviceInfo;
+
+	std::shared_ptr<utils::channel::AudioTrackManagerInterface> m_trackManager;
+
+    /// The current track state of the @c AIUIAutomaticSpeechRecognizer on the dialog channel.
+    utils::channel::FocusState m_trackState;
 
 	/// A consumer which the semantics message has been receive from sai sdk.
 	std::shared_ptr<dmInterface::MessageConsumerInterface> m_messageConsumer;
@@ -200,7 +219,7 @@ private:
 	
 	/// wakeup threshold (0~1) refer to sai sdk 
 	double m_threshold;
-
+	
 	/**
 	 * voip mode flag
 	 * 0: normal mode, 1: voip mode
@@ -210,14 +229,10 @@ private:
 	/// Set log level
 	releaseLogLevel m_logLevel;
 
-	/// Set of observers of SoundAiObserverInterface.
-	std::unordered_set<std::shared_ptr<utils::soundai::SoundAiObserverInterface>> m_observers;
+	/// A timer to transition out of the LISTENING state.
+	ASRTimer m_timeoutForListeningTimer;
 
-	/// Mutex to guard access of m_observers.
-    std::mutex m_observerMutex;
-
-	/// The current state of the @c SoundAiObserver.
-    SoundAiObserver::State m_state;
+	utils::threading::Executor m_executor;
 };
 
 }	//engine

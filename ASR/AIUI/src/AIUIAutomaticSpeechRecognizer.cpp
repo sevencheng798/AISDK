@@ -52,6 +52,7 @@ const std::string DEF_RECODER{"/tmp/tts-16k.pcm"};
 std::ofstream recoder(DEF_RECODER);
 #endif
 std::shared_ptr<AIUIAutomaticSpeechRecognizer> AIUIAutomaticSpeechRecognizer::create(
+	const std::shared_ptr<utils::DeviceInfo>& deviceInfo,
 	std::shared_ptr<utils::channel::AudioTrackManagerInterface> trackManager,
 	std::shared_ptr<utils::attachment::AttachmentManagerInterface> attachmentDocker,
 	std::shared_ptr<dmInterface::MessageConsumerInterface> messageConsumer,

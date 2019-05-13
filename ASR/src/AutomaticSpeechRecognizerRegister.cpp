@@ -12,7 +12,7 @@
 #include <Utils/Logging/Logger.h>
 #include "ASR/AutomaticSpeechRecognizerRegister.h"
 #if defined(ENABLE_SOUNDAI_ASR)
-
+#include "SoundAi/SoundAiAutomaticSpeechRecognizer.h"
 #elif defined(ENABLE_IFLYTEK_AIUI_ASR)
 #include "AIUI/AIUIAutomaticSpeechRecognizer.h"
 #endif
@@ -30,15 +30,18 @@ static const std::string TAG("AutomaticSpeechRecognizerRegister");
 #define LX(event) utils::logging::LogEntry(TAG, event)
 
 std::shared_ptr<GenericAutomaticSpeechRecognizer> AutomaticSpeechRecognizerRegister::create(
+	const std::shared_ptr<utils::DeviceInfo>& deviceInfo,
 	std::shared_ptr<utils::channel::AudioTrackManagerInterface> trackManager,
 	std::shared_ptr<utils::attachment::AttachmentManagerInterface> attachmentDocker,
 	std::shared_ptr<dmInterface::MessageConsumerInterface> messageConsumer,
 	const AutomaticSpeechRecognizerConfiguration& config) {
 
 #if defined(ENABLE_SOUNDAI_ASR)
-	#error "You need to impletement soundai asr engine."
+	return soundAiEngine::SoundAiAutomaticSpeechRecognizer::create(
+		deviceInfo, trackManager, attachmentDocker, messageConsumer, config);
 #elif defined(ENABLE_IFLYTEK_AIUI_ASR)
-	return aiuiEngine::AIUIAutomaticSpeechRecognizer::create(trackManager, attachmentDocker, messageConsumer, config);
+	return aiuiEngine::AIUIAutomaticSpeechRecognizer::create(
+		deviceInfo, trackManager, attachmentDocker, messageConsumer, config);
 #else
 	#error "No set any ASR enginer."
 	return nullptr;

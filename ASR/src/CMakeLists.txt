@@ -22,12 +22,13 @@ include_directories(ASR
 if (ENABLE_IFLYTEK_AIUI_ASR)
 include_directories(ASR 
 	"${ASR_SOURCE_DIR}/AIUI/include"
-	"${CMAKE_SOURCE_DIR}/ThirdLibrary/Iflytek/include")
+	"${IFLYTEK_AIUI_ASR_INCLUDE_DIR}")
 endif ()
 
 if(ENABLE_SOUNDAI_ASR)
 include_directories(ASR 
-	"${ASR_SOURCE_DIR}/SoundAi/include")
+	"${ASR_SOURCE_DIR}/SoundAi/include"
+	"${SOUNDAI_ASR_INCLUDE_DIR}")
 endif()
 
 target_link_libraries(ASR AICommon)

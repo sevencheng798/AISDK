@@ -25,6 +25,8 @@ namespace asr {
 // Create the automatic speech recognizer configuration object with explicit configuration values for all fields.
 class AutomaticSpeechRecognizerConfiguration {
 public:
+	inline double getSoundAiThreshold() const;
+	
 	inline std::string getSoundAiConfigPath() const;
 
 	inline std::string getAiuiAppId() const;
@@ -39,7 +41,9 @@ public:
      * Configurable constructor that can be used to set soundai configuration values.
      */
 	AutomaticSpeechRecognizerConfiguration(
-		const std::string &configPath):
+		const std::string &configPath,
+		const double threshold = 0.45):
+		m_threshold{threshold},
 		m_soundAiConfigPath{configPath} {
 
 	};
@@ -51,6 +55,7 @@ public:
 		const std::string &aiuiConfigFile = "/data/soundai/AIUI/cfg/aiui.cfg",
 		const std::string &aiuiDir = "/data/soundai/AIUI/",
 		const std::string &aiuiLogDir = "/data/soundai/AIUI/log/"):
+		m_threshold{0},
 		m_aiuiAppId{appId},
 		m_aiuiConfigFile{aiuiConfigFile},
 		m_aiuiDir{aiuiDir},
@@ -63,7 +68,8 @@ public:
     ~AutomaticSpeechRecognizerConfiguration() = default;
 
 private:
-
+	const double m_threshold;
+	
 	const std::string m_soundAiConfigPath;
 
 	const std::string m_aiuiAppId;
@@ -75,6 +81,10 @@ private:
 	const std::string m_aiuiLogDir;
 
 };
+
+double AutomaticSpeechRecognizerConfiguration::getSoundAiThreshold() const {
+	return m_threshold;
+}
 
 std::string AutomaticSpeechRecognizerConfiguration::getSoundAiConfigPath() const {
 	return m_soundAiConfigPath;

@@ -23,6 +23,7 @@
 
 #include <DMInterface/MessageConsumerInterface.h>
 #include <Utils/Threading/Executor.h>
+#include <Utils/DeviceInfo.h>
 #include <Utils/Channel/AudioTrackManagerInterface.h>
 #include <Utils/Channel/ChannelObserverInterface.h>
 #include "ASR/GenericAutomaticSpeechRecognizer.h"
@@ -58,6 +59,7 @@ public:
 	 * @return a @c AIUIAutomaticSpeechRecognizer, otherwise @c nullptr if creation failed.
 	 */
 	static std::shared_ptr<AIUIAutomaticSpeechRecognizer> create(
+		const std::shared_ptr<utils::DeviceInfo>& deviceInfo,
 		std::shared_ptr<utils::channel::AudioTrackManagerInterface> trackManager,
 		std::shared_ptr<utils::attachment::AttachmentManagerInterface> attachmentDocker,
 		std::shared_ptr<dmInterface::MessageConsumerInterface> messageConsumer,

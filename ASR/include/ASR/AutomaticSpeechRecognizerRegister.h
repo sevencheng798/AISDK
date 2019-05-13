@@ -16,6 +16,7 @@
 #include <unordered_set>
 
 #include <DMInterface/MessageConsumerInterface.h>
+#include <Utils/DeviceInfo.h>
 #include <Utils/SharedBuffer/BufferLayout.h>
 #include <Utils/Attachment/AttachmentManagerInterface.h>
 #include <Utils/Channel/AudioTrackManagerInterface.h>
@@ -42,6 +43,7 @@ public:
      * @Note: Return a point @c shared_ptr instance in here because enable_shared_from_this was called in subsequent classes.
 	 */
 	static std::shared_ptr<GenericAutomaticSpeechRecognizer> create(
+		const std::shared_ptr<utils::DeviceInfo>& deviceInfo,
 		std::shared_ptr<utils::channel::AudioTrackManagerInterface> trackManager,
 		std::shared_ptr<utils::attachment::AttachmentManagerInterface> attachmentDocker,
 		std::shared_ptr<dmInterface::MessageConsumerInterface> messageConsumer,

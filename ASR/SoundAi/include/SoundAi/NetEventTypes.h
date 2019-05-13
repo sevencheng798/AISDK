@@ -18,8 +18,8 @@
 #include "sai_sdk.h"
 
 namespace aisdk {
-namespace soundai {
-namespace engine {
+namespace asr {
+namespace soundAiEngine {
 
 /**
  * Convert an @c netEventType to an sai-compliant @c std::string.
