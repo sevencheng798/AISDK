@@ -23,3 +23,6 @@ include (KeywordDetector)
 
 # Setup ASR Engine variables.
 include (ASREngine)
+
+# Setup googletest variables.
+include (Gtest)
