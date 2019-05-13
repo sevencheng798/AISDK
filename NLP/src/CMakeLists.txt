@@ -11,7 +11,8 @@ add_library(NLP SHARED
 		DomainSequencer.cpp)
 
 target_include_directories(NLP PUBLIC
-        "${NLP_SOURCE_DIR}/include")
+        "${NLP_SOURCE_DIR}/include"
+	"${JSONCPP_INCLUDE_DIR}")
 
 target_link_libraries(NLP AICommon)
 
