@@ -42,11 +42,10 @@ add_subdirectory(ASR)
 add_subdirectory(KWD)
 add_subdirectory(NLP)
 add_subdirectory(Domain)
-if(IFLYTEK_AIUI_ASR)
+add_subdirectory(ThirdLibrary)
 add_subdirectory(Application)
-else()
-add_subdirectory(Microphone)
-endif()
+#add_subdirectory(Microphone)
+
 # Create .pc pkg-config file
 include(build/cmake/GeneratePkgConfig.cmake)
 
