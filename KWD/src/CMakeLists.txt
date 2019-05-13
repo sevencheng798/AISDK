@@ -21,12 +21,12 @@ include_directories(KWD
 if (IFLYTEK_KEY_WORD_DETECTOR)
 include_directories(KWD 
 	"${KWD_SOURCE_DIR}/IflyTek/include"
-	"${CMAKE_SOURCE_DIR}/ThirdLibrary/Iflytek/include")
+	"${IFLYTEK_KEY_WORD_DETECTOR_INCLUDE_DIR}")
 endif ()
 
 if(SOUNDAI_KEY_WORD_DETECTOR)
 include_directories(KWD 
-	"${KWD_SOURCE_DIR}/SoundAi/include")
+	"${SOUNDAI_KEY_WORD_DETECTOR_DIR}")
 endif()
 
 target_link_libraries(KWD AICommon)
