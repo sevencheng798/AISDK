@@ -7,6 +7,9 @@ list(APPEND SampleApp_SOURCES
 	ControlActionManager.cpp
 	KeywordObserver.cpp)
 
+# For AM113 to set the path.
+link_directories(${JSONCPP_LIB_PATH})
+
 add_executable(SampleApp ${SampleApp_SOURCES})
 
 target_include_directories(SampleApp PUBLIC
@@ -30,7 +33,7 @@ target_link_libraries(SampleApp
 		jsoncpp
 		z)
 if(SOUNDAI_ASR)
-	target_link_libraries(SampleApp SoundAi sai_sdk)
+	target_link_libraries(SampleApp sai_sdk)
 elseif(IFLYTEK_AIUI_ASR)
 	target_link_libraries(SampleApp aiui)
 endif()

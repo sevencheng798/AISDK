@@ -22,15 +22,11 @@
 #include <Utils/DialogRelay/DialogUXStateRelay.h>
 /// Stream buffer .
 #include <Utils/SharedBuffer/SharedBuffer.h>
-
 #include <DMInterface/DomainSequencerInterface.h>
 
 #include "AudioTrackManager/AudioTrackManager.h"
-#ifdef ENABLE_SOUNDAI_ASR
-#include "SoundAi/SoundAiEngine.h"
-#elif ENABLE_IFLYTEK_AIUI_ASR
+
 #include <ASR/GenericAutomaticSpeechRecognizer.h>
-#endif
 #include "SpeechSynthesizer/SpeechSynthesizer.h"
 
 namespace aisdk {
@@ -93,11 +89,7 @@ private:
 	std::shared_ptr<dmInterface::DomainSequencerInterface> m_domainSequencer;
 
 	/// The SoundAi client engine.
-#ifdef ENABLE_SOUNDAI_ASR
-	std::shared_ptr<soundai::engine::SoundAiEngine> m_soundAiEngine;
-#elif ENABLE_IFLYTEK_AIUI_ASR
 	std::shared_ptr<asr::GenericAutomaticSpeechRecognizer> m_asrEngine;
-#endif
 
 	/// The AudioTrack manager for audio channel player.
 	std::shared_ptr<atm::AudioTrackManager> m_audioTrackManager;

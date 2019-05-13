@@ -16,11 +16,6 @@
 #include <NLP/MessageInterpreter.h>
 #include <ASR/MessageConsumer.h>
 
-#ifdef ENABLE_SOUNDAI_ASR
-#include <SoundAi/MessageConsumer.h>
-#include <KeywordDetector/KeywordDetector.h>
-#endif
-
 #include <ASR/AutomaticSpeechRecognizerRegister.h>
 #include "Application/AIClient.h"
 
@@ -113,6 +108,13 @@ bool AIClient::initialize(
 
 	/// Creating a message consumer
 	auto messageConsumer = std::make_shared<asr::MessageConsumer>(messageInterpreter);
+
+	/*
+     * Creating the Audio Track Manager
+     */
+    m_audioTrackManager = std::make_shared<atm::AudioTrackManager>();
+
+#if 0		
 #ifdef ENABLE_SOUNDAI_ASR
 
 	/// Creating soundai client engine.
@@ -123,13 +125,6 @@ bool AIClient::initialize(
 		AISDK_ERROR(LX("initializeFailed").d("reason", "unableToCreateSoundAiEngine"));
 		return false;
 	}
-#endif	
-    /*
-     * Creating the Audio Track Manager
-     */
-    m_audioTrackManager = std::make_shared<atm::AudioTrackManager>();
-
-#ifdef ENABLE_SOUNDAI_ASR
 
 	/*
 	 * Creating the keyword observer - This is the commponent that deals with listener the soundai wakeup state.
@@ -141,22 +136,39 @@ bool AIClient::initialize(
 	m_soundAiEngine->addObserver(m_dialogUXStateRelay);
 #endif
 
-#ifdef ENABLE_IFLYTEK_AIUI_ASR
+#endif
 	
 	if(!attachmentDocker) {
 		AISDK_ERROR(LX("initializeFailed").d("reason", "unableToCreateAttachmentDocker"));
 		return false;
 	}
-	
-	m_asrEngine = asr::AutomaticSpeechRecognizerRegister::create(m_audioTrackManager, attachmentDocker, messageConsumer);
+#ifdef ENABLE_SOUNDAI_ASR
+	const std::string soundAiConfigPath("/cfg/sai_config");
+	const asr::AutomaticSpeechRecognizerConfiguration config{soundAiConfigPath, 0.45};
+	m_asrEngine = asr::AutomaticSpeechRecognizerRegister::create(
+		deviceInfo, 
+		m_audioTrackManager,
+		attachmentDocker,
+		messageConsumer,
+		config);
 	if(!m_asrEngine) {
 		AISDK_ERROR(LX("initializeFailed").d("reason", "unableToCreateASREngine"));
 		return false;
 	}
+#elif ENABLE_IFLYTEK_AIUI_ASR	
+	m_asrEngine = asr::AutomaticSpeechRecognizerRegister::create(
+		deviceInfo, 
+		m_audioTrackManager,
+		attachmentDocker,
+		messageConsumer);
+	if(!m_asrEngine) {
+		AISDK_ERROR(LX("initializeFailed").d("reason", "unableToCreateASREngine"));
+		return false;
+	}
+#endif
 
 	m_asrEngine->addASRObserver(m_dialogUXStateRelay);
 
-#endif
 	/*
 	 * Creating the speech synthesizer. This is the commponent that deals with real-time interactive domain.
 	 */
@@ -209,13 +221,13 @@ bool AIClient::notifyOfWakeWord(
 
 void AIClient::connect() {
 #ifdef ENABLE_SOUNDAI_ASR	
-	m_soundAiEngine->start();
+	m_asrEngine->start();
 #endif
 }
 
 void AIClient::disconnect() {
 #ifdef ENABLE_SOUNDAI_ASR
-	m_soundAiEngine->stop();
+	m_asrEngine->stop();
 #endif	
 }
 
